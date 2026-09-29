@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
 public class GradeCalculatorTest {
 
     // --- letterGrade: typical values ---
@@ -124,5 +127,28 @@ public class GradeCalculatorTest {
         GradeCalculator calc = new GradeCalculator();
         assertThrows(IllegalArgumentException.class,
                 () -> calc.totalScore(10, 41, 10, 10, 30));
+    }
+        // --- parameterized tests ---
+
+    @ParameterizedTest
+    @DisplayName("letterGrade хязгаарын утгуудыг зөв тооцох ёстой")
+    @CsvSource({
+        "95,A", "90,A", "89.99,B", "80,B",
+        "70,C", "60,D", "59.99,F", "0,F", "100,A"
+    })
+    void letterGradeBoundaries(double score, String expected) {
+        assertEquals(expected, new GradeCalculator().letterGrade(score));
+    }
+
+    @ParameterizedTest
+    @DisplayName("totalScore хэд хэдэн хүчинтэй хослолыг зөв нийлбэрлэх ёстой")
+    @CsvSource({
+        "10,40,10,10,30,100.0",
+        "0,0,0,0,0,0.0",
+        "5,20,5,5,15,50.0"
+    })
+    void totalScoreVariousCombinations(double att, double lab, double quiz1,
+                                        double quiz2, double exam, double expected) {
+        assertEquals(expected, new GradeCalculator().totalScore(att, lab, quiz1, quiz2, exam));
     }
 }
